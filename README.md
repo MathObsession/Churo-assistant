@@ -1,5 +1,7 @@
 # V1.7 Speech Agent
 
+## Feel free to just download any version you want, the README supports all the versions. All features will work after the version 1.4.
+
 A voice-driven AI assistant that listens for spoken queries, performs local actions, optionally captures images for visual requests, and answers using Ollama chat models.
 
 ## Features
@@ -14,6 +16,9 @@ A voice-driven AI assistant that listens for spoken queries, performs local acti
 
 ## Requirements
 
+- Install Ollama
+- Sign-in to Ollama
+- Install ministral-3:3b-cloud, ministral-3:8b-cloud, and gemma4:31b-cloud 
 - macOS
 - Python 3.11+ (recommended)
 - Microphone access
@@ -76,8 +81,3 @@ The assistant will prompt:
 - If speech recognition fails, verify microphone permissions and `speech_recognition` installation.
 - If camera capture fails, verify camera permissions and that `opencv-python` can access the device.
 - If audio playback fails, ensure `afplay` is available on macOS.
-
-## License
-
-This project does not include a license. Add one if needed.
-
