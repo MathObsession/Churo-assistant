@@ -119,6 +119,7 @@ If the prompt is recognized as an image request, the assistant converts it into 
 - The Stable Diffusion pipeline is loaded at startup, which may be slow on lower-powered machines.
 - The current code stores generated and captured images in the working directory.
 - The app-launching behavior is intentionally simple and may not match every app name perfectly.
+- The image preview in the terminal is pixelated and low quality.
 
 ## Future Opportunities
 
