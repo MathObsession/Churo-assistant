@@ -2,6 +2,12 @@
 
 V1.8 is an experimental voice-first AI assistant. It listens to spoken prompts, responds out loud, can launch apps on macOS, can search the web for current context, can inspect images from a webcam, and can generate images when the user asks for a visual result.
 
+## Preview
+
+https://github.com/user-attachments/assets/96eae019-043c-4a57-aa18-8ffb086d2865
+
+<hr>
+
 ## What It Does
 
 This project combines several assistant behaviors into one loop:
