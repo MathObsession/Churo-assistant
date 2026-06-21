@@ -1,58 +1,71 @@
-# V1.7 Speech Agent
+# V1.8 Speech Agent
 
-## Feel free to just download any version you want, the README supports all the versions. All features will work after the version 1.4.
+V1.8 is an experimental voice-first AI assistant. It listens to spoken prompts, responds out loud, can launch apps on macOS, can search the web for current context, can inspect images from a webcam, and can generate images when the user asks for a visual result.
 
-A voice-driven AI assistant that listens for spoken queries, performs local actions, optionally captures images for visual requests, and answers using Ollama chat models.
+## What It Does
 
-## Features
+This project combines several assistant behaviors into one loop:
 
-- Voice input with Whisper speech recognition
-- Text-to-speech output using `edge-tts`
-- Intelligent command handling with Ollama chat models
-- App launching on macOS for `open <app>` voice commands
-- Web search query simplification and results retrieval
-- Vision-context detection and camera image capture for visual queries
-- ANSI-enhanced console output with `rich`
+- Speech-to-text using Whisper through `speech_recognition`
+- Text-to-speech using `edge-tts`
+- App launching on macOS for commands such as `open Safari`
+- Web query simplification and search retrieval through DDGS
+- Webcam-based vision analysis for appearance or environment questions
+- Image generation with Stable Diffusion
+- Terminal-friendly output formatting with `rich`
+
+## Who This Is For
+
+This repository is intended for developers and hobbyists who want to explore a local voice assistant workflow. It is especially useful if you are interested in:
+
+- voice interfaces
+- multimodal AI interactions
+- local automation on macOS
+- image generation pipelines
+- combining web search, vision, and speech in a single assistant
 
 ## Requirements
 
-- Install Ollama
-- Sign-in to Ollama
-- Install ministral-3:3b-cloud, ministral-3:8b-cloud, and gemma4:31b-cloud 
 - macOS
-- Python 3.11+ (recommended)
-- Microphone access
-- Camera access for image-based queries
-- Installed Python packages:
-  - `ollama`
-  - `speech_recognition`
-  - `edge_tts`
-  - `ddgs`
-  - `opencv-python`
-  - `rich`
+- Python 3.11 or newer is recommended
+- A microphone with system permission enabled
+- A camera with system permission enabled if you want vision features
+- Ollama installed and available on the machine running the script
+- `chafa` installed if you want terminal previews for generated images
+- Hardware that can run the configured Stable Diffusion pipeline on `mps`, or code changes to target a different device
+
+## Python Dependencies
+
+The script uses the following Python packages:
+
+- `torch`
+- `ollama`
+- `speech_recognition`
+- `edge_tts`
+- `ddgs`
+- `opencv-python`
+- `rich`
+- `diffusers`
+- `term-image`
 
 ## Installation
 
-1. Clone or copy this folder:
+1. Clone the repository and open the `V1.8` folder.
 
-```bash
-cd /path/to/AI/OSS_speech_model/Phase-1/V1.7
-```
-
-2. Create and activate a Python virtual environment:
+2. Create a virtual environment:
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-3. Install required packages:
+3. Install the dependencies:
 
 ```bash
-pip install ollama speech_recognition edge_tts ddgs opencv-python rich
+pip install torch ollama SpeechRecognition edge-tts ddgs opencv-python rich diffusers term-image
 ```
 
-4. Make sure your environment has access to Ollama.
+4. Make sure Ollama can access the models referenced in `main.py`.
 
 ## Usage
 
@@ -62,22 +75,65 @@ Run the assistant with:
 python main.py
 ```
 
-The assistant will prompt:
+On startup, the program asks you to choose a voice:
 
-- Choose a voice: `Male` or `Female`
-- Speak a query after the prompt
-- It will attempt to answer, launch apps, or capture an image if visual context is needed
-- When finished, it asks whether you want to continue
+- `Male` selects `en-US-SteffanNeural`
+- Any other input selects `en-US-AvaNeural`
 
-## Notes
+Then the assistant will:
 
-- The current implementation uses `afplay` to play audio on macOS.
-- App launching relies on `mdfind` and the local macOS application metadata.
-- If the assistant cannot understand audio, it prompts again.
-- Visual queries are captured and saved temporarily as `instant_photo.png` in the current folder.
+1. Prompt you to speak
+2. Transcribe your speech
+3. Decide whether the request is for app launching, image generation, vision analysis, or a normal answer
+4. Speak the response back to you
+5. Ask whether you want to continue the conversation
+
+## How It Works
+
+### App Launching
+
+If the transcription includes `open`, the assistant tries to find a matching application on macOS. If no local app is found, it falls back to opening a website based on the target name.
+
+### Web Answers
+
+For general questions, the assistant first simplifies the query and fetches recent search results. The response model can use those results when the request is about news, current events, or recent information.
+
+### Vision Mode
+
+If the prompt seems to require visual context, the assistant captures a frame from the webcam, saves it locally, and sends it to a vision-capable model for analysis.
+
+### Image Generation
+
+If the prompt is recognized as an image request, the assistant converts it into a short image prompt, generates an image with Stable Diffusion, saves the result as `generated_image.png`, and displays it in the terminal.
+
+## Limitations
+
+- The current implementation is macOS-focused.
+- The assistant depends on several external models and services.
+- The Stable Diffusion pipeline is loaded at startup, which may be slow on lower-powered machines.
+- The current code stores generated and captured images in the working directory.
+- The app-launching behavior is intentionally simple and may not match every app name perfectly.
+
+## Future Opportunities
+
+This version leaves room for several improvements:
+
+- Add cross-platform support beyond macOS
+- Make the model names and device selection configurable through environment variables or a config file
+- Add a proper command parser for app launching instead of relying on keyword matching
+- Add a conversation history file or database
+- Add streaming responses so users hear partial answers sooner
+- Add a richer UI for desktop or web use
+- Add safer image handling and cleanup for generated files
+- Add a setup script or dependency file for easier installation
 
 ## Troubleshooting
 
-- If speech recognition fails, verify microphone permissions and `speech_recognition` installation.
-- If camera capture fails, verify camera permissions and that `opencv-python` can access the device.
-- If audio playback fails, ensure `afplay` is available on macOS.
+- If microphone input fails, check system permissions and verify `speech_recognition` is installed correctly.
+- If camera capture fails, check camera permissions and confirm OpenCV can access the device.
+- If image generation fails, verify that your hardware supports the configured device target or update the pipeline configuration.
+- If terminal image preview fails, install `chafa` and confirm it is available in your PATH.
+
+## License
+
+No license has been added yet. Add one before publishing or distributing the project widely.
