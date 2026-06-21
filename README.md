@@ -136,4 +136,4 @@ This version leaves room for several improvements:
 
 ## License
 
-No license has been added yet. Add one before publishing or distributing the project widely.
+The MIT licence has been added for maximum freedom
