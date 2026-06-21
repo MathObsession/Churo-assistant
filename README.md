@@ -4,7 +4,9 @@ V1.8 is an experimental voice-first AI assistant. It listens to spoken prompts, 
 
 ## Preview
 
-https://github.com/user-attachments/assets/96eae019-043c-4a57-aa18-8ffb086d2865
+
+https://github.com/user-attachments/assets/a4ca60a9-3868-4cab-acdb-4ddd5323cd20
+
 
 <hr>
 
