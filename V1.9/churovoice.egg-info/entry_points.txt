@@ -1,0 +1,2 @@
+[console_scripts]
+churovoice = churovoice.cli:main
