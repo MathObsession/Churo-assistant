@@ -1,0 +1,13 @@
+torch
+ollama
+SpeechRecognition
+edge-tts
+ddgs
+opencv-python
+rich
+diffusers
+transformers
+accelerate
+safetensors
+Pillow
+term-image

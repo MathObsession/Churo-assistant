@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "churovoice"
+version = "0.1.0"
+description = "A multimodal voice assistant with web search, vision, and image generation."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "torch",
+  "ollama",
+  "SpeechRecognition",
+  "edge-tts",
+  "ddgs",
+  "opencv-python",
+  "rich",
+  "diffusers",
+  "transformers",
+  "accelerate",
+  "safetensors",
+  "Pillow",
+  "term-image",
+]
+
+authors = [
+  { name = "Lakshya Prajapati" }
+]
+
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Operating System :: MacOS",
+  "Topic :: Multimedia :: Sound/Audio :: Speech",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.scripts]
+churovoice = "churovoice.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["churovoice*"]
