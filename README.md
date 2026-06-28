@@ -1,3 +1,6 @@
+<img width="1707" height="960" alt="Screenshot 2026-06-28 at 14 14 09" src="https://github.com/user-attachments/assets/05eb1e4e-0675-4aa2-8707-291e059c54cf" />
+
+
 # V1.8 Speech Agent
 
 V1.8 is an experimental voice-first AI assistant. It listens to spoken prompts, responds out loud, can launch apps on macOS, can search the web for current context, can inspect images from a webcam, and can generate images when the user asks for a visual result.
