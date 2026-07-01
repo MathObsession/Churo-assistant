@@ -61,4 +61,4 @@ If you liked this project please consider leaving a star it will help ChuroVoice
 <br>
 <br>
 
-¹PC users have to wait for V2.0 for getting app opening logic and image analysation.  
+¹Wndows and Linux support have been added
