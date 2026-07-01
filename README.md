@@ -1,5 +1,14 @@
 <img width="1707" height="960" alt="Screenshot 2026-06-28 at 14 14 09" src="https://github.com/user-attachments/assets/05eb1e4e-0675-4aa2-8707-291e059c54cf" />
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=MathObsession%2FChuro-assistant&type=timeline&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=MathObsession/Churo-assistant&type=timeline&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=MathObsession/Churo-assistant&type=timeline&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=MathObsession/Churo-assistant&type=timeline&legend=top-left" />
+ </picture>
+</a>
 
 # V1.8 Speech Agent
 
