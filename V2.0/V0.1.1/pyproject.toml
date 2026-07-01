@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "churovoice"
+version = "0.1.1"
+description = "A multimodal voice assistant with web search, vision, and image generation."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "Lakshya Prajapati" }
+]
+dependencies = [
+  "torch",
+  "ollama",
+  "SpeechRecognition",
+  "edge-tts",
+  "ddgs",
+  "opencv-python",
+  "rich",
+  "diffusers",
+  "transformers",
+  "accelerate",
+  "safetensors",
+  "Pillow",
+  "term-image",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Topic :: Multimedia :: Sound/Audio :: Speech",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# Cross-platform audio backends used by ``speech_recognition``.
+#
+# ``SpeechRecognition`` needs a microphone backend. On macOS and Linux,
+# ``PyAudio`` is the standard choice. On Windows, the pre-built
+# ``PyAudio-wheels`` package avoids a local C toolchain.
+[project.optional-dependencies]
+windows = [
+  "PyAudio-wheels; sys_platform == 'win32'",
+  "pypiwin32; sys_platform == 'win32'",
+]
+macos = [
+  "PyAudio; sys_platform == 'darwin'",
+]
+linux = [
+  "PyAudio; sys_platform == 'linux'",
+  "python3-xlib; sys_platform == 'linux'",
+]
+
+[project.scripts]
+churovoice = "churovoice.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["churovoice*"]

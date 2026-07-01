@@ -1,0 +1,30 @@
+torch
+ollama
+SpeechRecognition
+edge-tts
+ddgs
+opencv-python
+rich
+diffusers
+transformers
+accelerate
+safetensors
+Pillow
+term-image
+
+[linux]
+
+[linux:sys_platform == "linux"]
+PyAudio
+python3-xlib
+
+[macos]
+
+[macos:sys_platform == "darwin"]
+PyAudio
+
+[windows]
+
+[windows:sys_platform == "win32"]
+PyAudio-wheels
+pypiwin32
