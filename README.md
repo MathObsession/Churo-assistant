@@ -24,6 +24,7 @@ https://github.com/user-attachments/assets/a4ca60a9-3868-4cab-acdb-4ddd5323cd20
 
 **Step (II)**
 - Install the `churovoice` library using:
+- For PC and Linux support ensure that your churovoice version is either `churovoice==0.1.1` or higher.
 
 Mac:
 `pip3 install churovoice`
