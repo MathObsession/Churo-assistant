@@ -1,0 +1,241 @@
+# ChuroVoice V0.1.1
+
+A multimodal voice assistant that works on **macOS** and **Windows** (with
+Linux support thrown in for free). It listens to spoken prompts, responds
+out loud, can launch apps and websites, can search the web for current
+context, can inspect images from a webcam, and can generate images when the
+user asks for a visual result.
+
+## What It Does
+
+- **Speech-to-text** via Whisper through `speech_recognition`
+- **Text-to-speech** via `edge-tts` (played back with `afplay` on macOS,
+  PowerShell's `Media.SoundPlayer` on Windows, or `mpg123`/`ffplay` on
+  Linux)
+- **App launching** that uses the platform's native discovery mechanism
+  (`mdfind` on macOS, the Start Menu on Windows, `.desktop` files on Linux)
+  with a website fallback
+- **Web query simplification** and search retrieval through DDGS
+- **Webcam-based vision** analysis for appearance or environment questions
+- **Image generation** with Stable Diffusion (CUDA on Windows/Linux,
+  MPS on macOS, CPU fallback everywhere else)
+- **Terminal-friendly output** with `rich`
+
+## Who This Is For
+
+- Voice-interface enthusiasts
+- Multimodal AI experimenters
+- Anyone who wants a local voice assistant that runs cross-platform
+
+## Platform Support
+
+| OS      | Tested | Audio playback                  | App launch                      | Stable Diffusion device |
+|---------|--------|---------------------------------|---------------------------------|-------------------------|
+| macOS   | yes    | `afplay` (built-in)             | `mdfind` / `open` (built-in)    | `mps` or `cpu`          |
+| Windows | yes    | PowerShell `Media.SoundPlayer`  | Start Menu scan / `start`       | `cuda` or `cpu`         |
+| Linux   | yes    | `mpg123` / `ffplay` / `paplay`  | `.desktop` files / `xdg-open`   | `cuda` or `cpu`         |
+
+## Requirements
+
+- **Python 3.11** or newer
+- A microphone with OS-level permission enabled
+- A camera with OS-level permission enabled (only if you want vision)
+- **Ollama** installed and running locally
+  ([download for macOS / Windows / Linux](https://ollama.com/download))
+- Optional: `chafa` for inline terminal image previews (macOS / Linux).
+  On Windows the assistant just prints a "Saved to <path>" message because
+  Windows Terminal doesn't speak the iTerm/Kitty image protocols.
+- For Stable Diffusion on Windows / Linux you'll want a CUDA-capable GPU
+  and the matching PyTorch wheel.
+
+## Python Dependencies
+
+The package is configured with optional-dependency groups so you only
+install what you need.
+
+### macOS
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -e ".[macos]"
+```
+
+`PyAudio` on macOS needs `portaudio` if it's not already on the system:
+
+```bash
+brew install portaudio
+```
+
+### Windows
+
+```bat
+python -m venv venv
+venv\Scripts\activate
+pip install -e ".[windows]"
+```
+
+`PyAudio-wheels` is a drop-in replacement for `PyAudio` that publishes
+pre-built wheels for Windows so you don't need Build Tools for Visual
+Studio.
+
+### Linux (bonus)
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+sudo apt install python3-pyaudio portaudio19-dev mpg123
+pip install -e ".[linux]"
+```
+
+## Ollama Setup
+
+After installing Ollama, pull the models referenced in
+`churovoice/assistant.py`:
+
+```bash
+ollama pull gemma4:31b-cloud
+ollama pull ministral-3:3b-cloud
+ollama pull ministral-3:8b-cloud
+ollama pull ministral-3:14b-cloud
+```
+
+(You can override the model names with environment variables - see
+[Configuration](#configuration).)
+
+## Usage
+
+### From the source tree
+
+```bash
+python main.py                    # macOS / Linux
+python main.py --voice male       # explicit voice
+```
+
+```bat
+python main.py                    :: Windows
+python main.py --voice female
+```
+
+### As an installed package
+
+```bash
+churovoice
+churovoice --voice male
+```
+
+On startup the program asks you to choose a voice:
+
+- `Male` selects `en-US-SteffanNeural`
+- Anything else selects `en-US-AvaNeural`
+
+Then the assistant:
+
+1. Prompts you to speak
+2. Transcribes your speech
+3. Decides whether the request is for app launching, image generation,
+   vision analysis, or a normal answer
+4. Speaks the response back to you
+5. Asks whether you want to continue the conversation
+
+## Configuration
+
+Every model used by the assistant is configurable through an environment
+variable. Set them before running, or drop them in a shell profile.
+
+| Variable                          | Default                         |
+|-----------------------------------|---------------------------------|
+| `CHUROVOICE_CHAT_MODEL`           | `gemma4:31b-cloud`              |
+| `CHUROVOICE_IMAGE_TRIGGER_MODEL`  | `ministral-3:14b-cloud`         |
+| `CHUROVOICE_IMAGE_PROMPT_MODEL`   | `ministral-3:3b-cloud`          |
+| `CHUROVOICE_WEB_MODEL`            | `ministral-3:3b-cloud`          |
+| `CHUROVOICE_VISION_MODEL`         | `ministral-3:14b-cloud`         |
+| `CHUROVOICE_IMAGE_ANALYSIS_MODEL` | `ministral-3:8b-cloud`          |
+| `CHUROVOICE_SD_MODEL`             | `nota-ai/bk-sdm-small`          |
+
+## How It Works
+
+### App Launching
+
+If the transcription includes `open`, the assistant searches the host OS
+for a matching application. The lookup is delegated to
+`churovoice.platform_utils.find_applications`, which uses:
+
+- `mdfind` on macOS,
+- the Windows Start Menu (`.lnk` files) on Windows,
+- the FreeDesktop menu (`.desktop` files) on Linux.
+
+If nothing matches, the assistant falls back to opening
+`https://<target>.com`.
+
+### Web Answers
+
+For general questions, the assistant first simplifies the query and
+fetches recent search results. The response model can use those results
+when the request is about news, current events, or recent information.
+
+### Vision Mode
+
+If the prompt seems to require visual context, the assistant captures a
+frame from the webcam, saves it locally, and sends it to a vision-capable
+model for analysis.
+
+### Image Generation
+
+If the prompt is recognized as an image request, the assistant converts
+it into a short image prompt, generates an image with Stable Diffusion,
+saves the result as `generated_image.png`, and (on macOS / Linux) renders
+it in the terminal with `chafa` if `chafa` is on `PATH`.
+
+## Cross-Platform Architecture
+
+All OS-specific behaviour is isolated in
+[`churovoice/platform_utils.py`](churovoice/platform_utils.py):
+
+- `play_audio` - chooses `afplay`, PowerShell `Media.SoundPlayer`, or a
+  Linux audio player.
+- `open_url` / `open_path` - chooses `open`, `cmd /c start`, or
+  `xdg-open`.
+- `find_applications` - chooses the appropriate application discovery
+  strategy for the host.
+- `preview_image_in_terminal` - picks `chafa` when available, otherwise
+  prints the saved path.
+- `resolve_device` (in `assistant.py`) - picks `mps` / `cuda` / `cpu`
+  automatically.
+
+The rest of the assistant is plain Python that doesn't care which OS it
+runs on.
+
+## Limitations
+
+- The first run downloads the Stable Diffusion checkpoint, which can be
+  several hundred MB.
+- The Windows terminal can't preview generated images inline; you'll find
+  them as `generated_image.png` in the working directory.
+- App-launching uses simple substring matching, so it can be wrong for
+  ambiguous names (e.g. "open code" could be VS Code or VS Codium).
+- The assistant depends on several external models and services.
+
+## Troubleshooting
+
+- **Microphone not detected (Windows)**: confirm the OS has granted
+  microphone access to the terminal/Python, and that `PyAudio-wheels`
+  installed successfully. Reinstall with `pip install --force-reinstall
+  PyAudio-wheels`.
+- **`OSError: [Errno -9999] No Default Input Device Available` on
+  macOS**: open *System Settings -> Privacy & Security -> Microphone* and
+  enable access for your terminal.
+- **Camera not detected**: confirm camera permissions for the terminal
+  and that no other app (Zoom, Photo Booth, etc.) is holding the device.
+- **TTS is silent on Windows**: confirm PowerShell can play audio
+  (`powershell -c "(New-Object Media.SoundPlayer 'C:\Windows\Media\chord.wav').PlaySync()"`).
+- **No audio on Linux**: install `mpg123` (`sudo apt install mpg123`) or
+  `ffmpeg`/`ffplay` for `ffplay` support.
+- **Image generation fails / OOM**: drop the model, run on CPU by setting
+  `CHUROVOICE_SD_MODEL` to a smaller checkpoint, or lower
+  `num_inference_steps`.
+
+## License
+
+No license has been added yet. Add one before publishing or distributing
+the project widely.

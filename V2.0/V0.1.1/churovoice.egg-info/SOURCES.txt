@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+churovoice/__init__.py
+churovoice/assistant.py
+churovoice/cli.py
+churovoice/platform_utils.py
+churovoice.egg-info/PKG-INFO
+churovoice.egg-info/SOURCES.txt
+churovoice.egg-info/dependency_links.txt
+churovoice.egg-info/entry_points.txt
+churovoice.egg-info/requires.txt
+churovoice.egg-info/top_level.txt
